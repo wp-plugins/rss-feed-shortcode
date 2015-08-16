@@ -26,3 +26,6 @@ The feeds are loaded with ajax, which means you can load up your Post or Page wi
 
 = 1.0.0 =
 * Initial release
+
+= 1.0.1 =
+* Add compatibility for older PHP versions

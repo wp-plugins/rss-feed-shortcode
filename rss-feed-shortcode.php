@@ -4,7 +4,7 @@
  * Description: A fast ajax shortcode that outputs the latest items out of an RSS feed of your choice.
  * Author: Carlo Manf
  * Author URI: http://carlomanf.id.au
- * Version: 1.0.0
+ * Version: 1.0.1
  */
 
 // Render the table for the feed output
@@ -63,23 +63,26 @@ function rss_feed_shortcode_get_feed() {
 }
 
 // Handle the feed shortcode
-add_shortcode( 'rss', function( $atts ) {
+add_shortcode( 'rss', 'rss_feed_shortcode' );
+function rss_feed_shortcode( $atts ) {
 	$atts = shortcode_atts( array( 'feed' => null ), $atts, 'rss' );
 
 	$GLOBALS[ 'rss_feed_shortcode' ] = true;
 
 	return '<div class="rss-feed"><p><a href="' . esc_attr( $atts[ 'feed' ] ) . '">Loading feed &hellip;</a></p></div>';
-} );
+}
 
 // Register the feed ajax script just in case
-add_action( 'init', function() {
+add_action( 'init', 'rss_feed_shortcode_register_script' );
+function rss_feed_shortcode_register_script() {
 	wp_register_script( 'rss-feed-shortcode', plugins_url( 'rss-feed-shortcode.js', __FILE__ ), array( 'jquery' ), '', true );
-} );
+}
 
 // Only print it if the feed shortcode is present
-add_action( 'wp_footer', function() {
+add_action( 'wp_footer', 'rss_feed_shortcode_print_script' );
+function rss_feed_shortcode_print_script() {
 	if ( isset( $GLOBALS[ 'rss_feed_shortcode' ] ) && true === $GLOBALS[ 'rss_feed_shortcode' ] ) {
 		printf( '<script>var ajaxurl="%s";</script>', admin_url( 'admin-ajax.php' ) );
 		wp_print_scripts( 'rss-feed-shortcode' );
 	}
-} );
+}
